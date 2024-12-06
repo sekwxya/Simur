@@ -3,7 +3,7 @@
 namespace TourAgency.Models
 {
     public class User
-    {
+    {пше 
         public int UserId { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
