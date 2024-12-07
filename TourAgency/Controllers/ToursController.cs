@@ -12,17 +12,17 @@ namespace TourAgency.Controllers
 {
     public class ToursController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext dbContext;
 
-        public ToursController(AppDbContext context)
+        public ToursController(AppDbContext dbContext)
         {
-            _context = context;
+            this.dbContext = dbContext;
         }
 
         // GET: Tours
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tour.ToListAsync());
+            return View(await dbContext.Tour.ToListAsync());
         }
 
         // GET: Tours/Details/5
@@ -33,7 +33,7 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
-            var tour = await _context.Tour
+            var tour = await dbContext.Tour
                 .FirstOrDefaultAsync(m => m.TourId == id);
             if (tour == null)
             {
@@ -53,14 +53,13 @@ namespace TourAgency.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TourId,Title,Description,Country,Price,StartDate,EndDate,IsHot")] Tour tour)
+        public IActionResult Create(Tour tour)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tour);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                dbContext.Add(tour);
+                dbContext.SaveChanges();
+                return RedirectToAction("Index");
             }
             return View(tour);
         }
@@ -73,7 +72,7 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
-            var tour = await _context.Tour.FindAsync(id);
+            var tour = await dbContext.Tour.FindAsync(id);
             if (tour == null)
             {
                 return NotFound();
@@ -97,8 +96,8 @@ namespace TourAgency.Controllers
             {
                 try
                 {
-                    _context.Update(tour);
-                    await _context.SaveChangesAsync();
+                    dbContext.Update(tour);
+                    await dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,7 +123,7 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
-            var tour = await _context.Tour
+            var tour = await dbContext.Tour
                 .FirstOrDefaultAsync(m => m.TourId == id);
             if (tour == null)
             {
@@ -139,19 +138,19 @@ namespace TourAgency.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tour = await _context.Tour.FindAsync(id);
+            var tour = await dbContext.Tour.FindAsync(id);
             if (tour != null)
             {
-                _context.Tour.Remove(tour);
+                dbContext.Tour.Remove(tour);
             }
 
-            await _context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TourExists(int id)
         {
-            return _context.Tour.Any(e => e.TourId == id);
+            return dbContext.Tour.Any(e => e.TourId == id);
         }
     }
 }
