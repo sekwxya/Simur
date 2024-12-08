@@ -6,6 +6,6 @@
         public int UserId { get; set; }
         public string Preferences { get; set; } // Пожелания пользователя
         public string Status { get; set; } // "Pending", "In Progress", "Completed"
-        public virtual User User { get; set; }
+        public User User { get; set; }
     }
 }

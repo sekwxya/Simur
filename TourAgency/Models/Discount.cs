@@ -3,8 +3,9 @@
     public class Discount
     {
         public int DiscountId { get; set; }
-        public int TourId { get; set; }
+        public string Name { get; set; }
         public decimal DiscountPercentage { get; set; }
-        public virtual Tour Tour { get; set; }
+        public List<Tour> tours { get; set; } = new();
+
     }
 }

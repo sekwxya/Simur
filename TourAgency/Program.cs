@@ -33,7 +33,7 @@ namespace TourAgency
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Tour}/{action=Index}/{id?}");
+                pattern: "{controller=Tours}/{action=Index}/{id?}");
 
             app.Run();
         }

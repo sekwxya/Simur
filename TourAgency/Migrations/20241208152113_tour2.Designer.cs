@@ -12,8 +12,8 @@ using TourAgency.Data;
 namespace TourAgency.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241207141400_InitMigration")]
-    partial class InitMigration
+    [Migration("20241208152113_tour2")]
+    partial class tour2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,12 +59,11 @@ namespace TourAgency.Migrations
                     b.Property<decimal>("DiscountPercentage")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("TourId")
-                        .HasColumnType("integer");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("DiscountId");
-
-                    b.HasIndex("TourId");
 
                     b.ToTable("Discount");
                 });
@@ -115,23 +114,25 @@ namespace TourAgency.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("integer");
 
-                    b.Property<bool>("IsHot")
-                        .HasColumnType("boolean");
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("TourId");
+
+                    b.HasIndex("DiscountId");
 
                     b.ToTable("Tour");
                 });
@@ -217,21 +218,10 @@ namespace TourAgency.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("TourAgency.Models.Discount", b =>
-                {
-                    b.HasOne("TourAgency.Models.Tour", "Tour")
-                        .WithMany()
-                        .HasForeignKey("TourId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tour");
-                });
-
             modelBuilder.Entity("TourAgency.Models.Review", b =>
                 {
                     b.HasOne("TourAgency.Models.Tour", "Tour")
-                        .WithMany("Reviews")
+                        .WithMany("reviews")
                         .HasForeignKey("TourId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -247,10 +237,21 @@ namespace TourAgency.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TourAgency.Models.Tour", b =>
+                {
+                    b.HasOne("TourAgency.Models.Discount", "Discount")
+                        .WithMany("tours")
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discount");
+                });
+
             modelBuilder.Entity("TourAgency.Models.TourPlan", b =>
                 {
                     b.HasOne("TourAgency.Models.Tour", "Tour")
-                        .WithMany("TourPlans")
+                        .WithMany("tourPlans")
                         .HasForeignKey("TourId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -277,11 +278,16 @@ namespace TourAgency.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TourAgency.Models.Discount", b =>
+                {
+                    b.Navigation("tours");
+                });
+
             modelBuilder.Entity("TourAgency.Models.Tour", b =>
                 {
-                    b.Navigation("Reviews");
+                    b.Navigation("reviews");
 
-                    b.Navigation("TourPlans");
+                    b.Navigation("tourPlans");
                 });
 
             modelBuilder.Entity("TourAgency.Models.User", b =>

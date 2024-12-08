@@ -12,17 +12,18 @@ namespace TourAgency.Controllers
 {
     public class ToursController : Controller
     {
-        private readonly AppDbContext dbContext;
+        private readonly AppDbContext _context;
 
-        public ToursController(AppDbContext dbContext)
+        public ToursController(AppDbContext context)
         {
-            this.dbContext = dbContext;
+            _context = context;
         }
 
         // GET: Tours
         public async Task<IActionResult> Index()
         {
-            return View(await dbContext.Tour.ToListAsync());
+            var appDbContext = _context.Tour.Include(t => t.Discount);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: Tours/Details/5
@@ -33,7 +34,8 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
-            var tour = await dbContext.Tour
+            var tour = await _context.Tour
+                .Include(t => t.Discount)
                 .FirstOrDefaultAsync(m => m.TourId == id);
             if (tour == null)
             {
@@ -46,21 +48,23 @@ namespace TourAgency.Controllers
         // GET: Tours/Create
         public IActionResult Create()
         {
+            ViewData["DiscountId"] = new SelectList(_context.Discount, "DiscountId", "Name");
             return View();
         }
 
         // POST: Tours/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public IActionResult Create(Tour tour)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("TourId,Title,Description,Country,Price,StartDate,EndDate,DiscountId")] Tour tour)
         {
+            tour.Discount = _context.Discount.Where(x => x.DiscountId == tour.DiscountId).FirstOrDefault();
             if (ModelState.IsValid)
             {
-                dbContext.Add(tour);
-                dbContext.SaveChanges();
-                return RedirectToAction("Index");
+                _context.Add(tour);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
+            ViewData["DiscountId"] = new SelectList(_context.Discount, "DiscountId", "Name", tour.DiscountId);
             return View(tour);
         }
 
@@ -72,20 +76,19 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
-            var tour = await dbContext.Tour.FindAsync(id);
+            var tour = await _context.Tour.FindAsync(id);
             if (tour == null)
             {
                 return NotFound();
             }
+            ViewData["DiscountId"] = new SelectList(_context.Discount, "DiscountId", "DiscountId", tour.DiscountId);
             return View(tour);
         }
 
         // POST: Tours/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TourId,Title,Description,Country,Price,StartDate,EndDate,IsHot")] Tour tour)
+        public async Task<IActionResult> Edit(int id, [Bind("TourId,Title,Description,Country,Price,StartDate,EndDate,DiscountId")] Tour tour)
         {
             if (id != tour.TourId)
             {
@@ -96,8 +99,8 @@ namespace TourAgency.Controllers
             {
                 try
                 {
-                    dbContext.Update(tour);
-                    await dbContext.SaveChangesAsync();
+                    _context.Update(tour);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -112,6 +115,7 @@ namespace TourAgency.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DiscountId"] = new SelectList(_context.Discount, "DiscountId", "DiscountId", tour.DiscountId);
             return View(tour);
         }
 
@@ -123,7 +127,8 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
-            var tour = await dbContext.Tour
+            var tour = await _context.Tour
+                .Include(t => t.Discount)
                 .FirstOrDefaultAsync(m => m.TourId == id);
             if (tour == null)
             {
@@ -138,19 +143,19 @@ namespace TourAgency.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tour = await dbContext.Tour.FindAsync(id);
+            var tour = await _context.Tour.FindAsync(id);
             if (tour != null)
             {
-                dbContext.Tour.Remove(tour);
+                _context.Tour.Remove(tour);
             }
 
-            await dbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TourExists(int id)
         {
-            return dbContext.Tour.Any(e => e.TourId == id);
+            return _context.Tour.Any(e => e.TourId == id);
         }
     }
 }

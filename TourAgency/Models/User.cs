@@ -10,7 +10,7 @@ namespace TourAgency.Models
         public string Password { get; set; }
         public string Role { get; set; } // "Visitor" или "TourManager"
         public int LoyaltyPoints { get; set; } // Бонусные баллы
-        public virtual ICollection<Review> Reviews { get; set; }
-        public virtual ICollection<TourRequest> TourRequests { get; set; }
+        public List<Review> Reviews { get; set; }
+        public List<TourRequest> TourRequests { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TourAgency.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class tour2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,22 +28,17 @@ namespace TourAgency.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tour",
+                name: "Discount",
                 columns: table => new
                 {
-                    TourId = table.Column<int>(type: "integer", nullable: false)
+                    DiscountId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Country = table.Column<string>(type: "text", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsHot = table.Column<bool>(type: "boolean", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    DiscountPercentage = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tour", x => x.TourId);
+                    table.PrimaryKey("PK_Discount", x => x.DiscountId);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,22 +59,48 @@ namespace TourAgency.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Discount",
+                name: "Tour",
                 columns: table => new
                 {
-                    DiscountId = table.Column<int>(type: "integer", nullable: false)
+                    TourId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TourId = table.Column<int>(type: "integer", nullable: false),
-                    DiscountPercentage = table.Column<decimal>(type: "numeric", nullable: false)
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Country = table.Column<string>(type: "text", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    DiscountId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Discount", x => x.DiscountId);
+                    table.PrimaryKey("PK_Tour", x => x.TourId);
                     table.ForeignKey(
-                        name: "FK_Discount_Tour_TourId",
-                        column: x => x.TourId,
-                        principalTable: "Tour",
-                        principalColumn: "TourId",
+                        name: "FK_Tour_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TourRequest",
+                columns: table => new
+                {
+                    TourRequestId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Preferences = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TourRequest", x => x.TourRequestId);
+                    table.ForeignKey(
+                        name: "FK_TourRequest_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -137,32 +158,6 @@ namespace TourAgency.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "TourRequest",
-                columns: table => new
-                {
-                    TourRequestId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    Preferences = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TourRequest", x => x.TourRequestId);
-                    table.ForeignKey(
-                        name: "FK_TourRequest_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Discount_TourId",
-                table: "Discount",
-                column: "TourId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_Rewiew_TourId",
                 table: "Rewiew",
@@ -172,6 +167,11 @@ namespace TourAgency.Migrations
                 name: "IX_Rewiew_UserId",
                 table: "Rewiew",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tour_DiscountId",
+                table: "Tour",
+                column: "DiscountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TourPlan_TourId",
@@ -196,9 +196,6 @@ namespace TourAgency.Migrations
                 name: "CountryStatistics");
 
             migrationBuilder.DropTable(
-                name: "Discount");
-
-            migrationBuilder.DropTable(
                 name: "Rewiew");
 
             migrationBuilder.DropTable(
@@ -212,6 +209,9 @@ namespace TourAgency.Migrations
 
             migrationBuilder.DropTable(
                 name: "User");
+
+            migrationBuilder.DropTable(
+                name: "Discount");
         }
     }
 }

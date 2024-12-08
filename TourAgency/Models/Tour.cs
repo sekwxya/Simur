@@ -11,8 +11,9 @@ namespace TourAgency.Models
         public decimal Price { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
-        public bool IsHot { get; set; } // Флаг "горящего тура"
-        public virtual ICollection<Review> Reviews { get; set; }
-        public virtual ICollection<TourPlan> TourPlans { get; set; }
+        public int DiscountId { get; set; }
+        public Discount? Discount { get; set; }
+        public List<TourPlan> tourPlans { get; set; } = new();
+        public List<Review> reviews { get; set; } = new();
     }
 }
