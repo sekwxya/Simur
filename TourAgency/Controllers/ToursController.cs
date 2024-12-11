@@ -19,6 +19,8 @@ namespace TourAgency.Controllers
             _context = context;
         }
 
+
+
         // GET: Tours
         public async Task<IActionResult> Index()
         {
@@ -162,6 +164,45 @@ namespace TourAgency.Controllers
         private bool TourExists(int id)
         {
             return _context.Tour.Any(e => e.TourId == id);
+        }
+
+
+        // Действие для вывода статистики по странам
+        public async Task<IActionResult> Statistics()
+        {
+            // Группировка туров по странам с расчетом метрик
+            var statistics = await _context.Tour
+                .GroupBy(t => t.Country)
+                .Select(group => new CountryStatistics
+                {
+                    Country = group.Key,
+                    TourCount = group.Count(),
+                    Revenue = group.Sum(t => t.Price)
+                })
+                .ToListAsync();
+
+            return View(statistics);
+        }
+
+        [HttpPost]
+        public IActionResult SubmitTourRequest(string preferences)
+        {
+            if (string.IsNullOrWhiteSpace(preferences))
+            {
+                return BadRequest("Комментарий не может быть пустым.");
+            }
+
+            var tourRequest = new TourRequest
+            {
+                Status = "На рассмотрении",
+                UserId = 1, // Установить ID пользователя вручную (например, для текущего юзера)
+                Preferences = preferences,
+            };
+
+            _context.Add(tourRequest);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Заявка успешно отправлена!" });
         }
     }
 }
