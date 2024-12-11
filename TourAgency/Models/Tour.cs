@@ -16,28 +16,8 @@ namespace TourAgency.Models
         public List<TourPlan> tourPlans { get; set; } = new();
         public List<Review> reviews { get; set; } = new();
 
-        // Метод для проверки, является ли тур "горящим"
-        public bool IsHotTour()
-        {
-            var today = DateOnly.FromDateTime(DateTime.Today);
-            var daysUntilStart = StartDate.DayNumber - today.DayNumber;
-            return daysUntilStart <= 7; // Тур считается "горящим", если до начала осталось 7 дней или меньше
-        }
-
-        // Метод для расчета цены с учетом скидки
-        public decimal GetDiscountedPrice(Discount hotTourDiscount)
-        {
-            var basePrice = Price;
-            if (Discount != null)
-            {
-                basePrice -= basePrice * Discount.DiscountPercentage;
-            }
-            if (IsHotTour() && DiscountId == 1) // Применяем скидку на "горящие туры" только если DiscountId = 1
-            {
-                basePrice -= basePrice * hotTourDiscount.DiscountPercentage;
-            }
-            return basePrice;
-        }
+        public decimal DiscountedPrice => Discount != null
+           ? Price * (1 - Discount.DiscountPercentage / 100)
+           : Price;
     }
-
 }
