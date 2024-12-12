@@ -84,12 +84,12 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
-            var tour = await _context.Tour.FindAsync(id);
+            var tour = await _context.Tour.Include(x => x.Discount ).FirstOrDefaultAsync(x => x.TourId == id);
             if (tour == null)
             {
                 return NotFound();
             }
-            ViewData["DiscountId"] = new SelectList(_context.Discount, "DiscountId", "DiscountId", tour.DiscountId);
+            ViewData["DiscountId"] = new SelectList(_context.Discount, "DiscountId", "Name", tour.DiscountId);
             return View(tour);
         }
 
