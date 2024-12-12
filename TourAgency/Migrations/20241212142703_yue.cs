@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TourAgency.Migrations
 {
     /// <inheritdoc />
-    public partial class workPLS : Migration
+    public partial class yue : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -12,8 +12,8 @@ using TourAgency.Data;
 namespace TourAgency.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241212075653_workPLS")]
-    partial class workPLS
+    [Migration("20241212142703_yue")]
+    partial class yue
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
