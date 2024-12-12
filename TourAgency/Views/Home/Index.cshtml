@@ -1,108 +1,108 @@
-﻿@{
-    Layout = null;
-}
+﻿<style>
+    /* Центрирование кнопки внутри button-container */
+    .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Используем всю высоту страницы */
+        position: relative;
+    }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Модальное окно</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .button-container {
-            text-align: center;
-        }
-
-        .open-modal-btn {
+        /* Стили для кнопки внутри button-container */
+        .button-container .open-modal-btn {
             padding: 10px 20px;
             font-size: 16px;
-            color: #fff;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 90%;
-            max-width: 400px;
-            padding: 20px;
-            border-radius: 8px;
-            z-index: 1000;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-        }
-
-        .modal-header {
-            font-size: 18px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .modal textarea {
-            width: 100%;
-            height: 120px;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: none;
-            box-sizing: border-box;
-        }
-
-        .modal button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            color: #fff;
-            background-color: #007bff;
+            background-color: #4CAF50; /* Зеленый цвет */
+            color: white;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
 
-            .modal button:hover {
-                background-color: #0056b3;
+            /* Эффект наведения на кнопку */
+            .button-container .open-modal-btn:hover {
+                background-color: #45a049; /* Более темный зеленый цвет при наведении */
             }
 
-        .close-modal {
-            background-color: #dc3545;
-        }
-    </style>
-</head>
-<body>
-    <div class="button-container">
+    /* Модальное окно */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    /* Центрирование модального окна */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 400px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        overflow: hidden;
+    }
+
+    /* Стили для заголовка модального окна */
+    .modal-header {
+        font-size: 18px;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    /* Стили для формы внутри модального окна */
+    textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    /* Стили для кнопок внутри модального окна */
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 5px;
+        border-radius: 4px;
+        border: none;
+    }
+
+    /* Кнопка закрытия */
+    .close-modal {
+        background-color: #f44336;
+        color: white;
+    }
+
+    /* Кнопка отправки */
+    button[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    /* Кнопка внутри формы */
+    button[type="button"] {
+        background-color: #ccc;
+        color: white;
+    }
+
+</style>    
+
+<div class="button-container">
         <button class="open-modal-btn" onclick="openModal()">Открыть форму</button>
-    </div>
 
     <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
 
@@ -162,5 +162,4 @@
                 });
         });
     </script>
-</body>
-</html>
+</div>

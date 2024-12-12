@@ -1,0 +1,24 @@
+﻿@model IEnumerable<TourAgency.Models.TourRequest>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Заявки на подбор тура</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<ul class="nav nav-tabs" id="tourTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" asp-controller="Tours" asp-action="Index" aria-selected="false">Tours</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" asp-controller="Discounts" asp-action="Index">Discount</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" asp-controller="Discounts" asp-action="Index">TourRequests</a>
+    </li>
+</ul>
+
