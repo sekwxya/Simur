@@ -18,7 +18,7 @@ namespace TourAgency
                 .AddCookie(options =>
                 {
                     options.LoginPath = new PathString("/Account/Login");
-                    options.AccessDeniedPath = new PathString("/Account/Login");
+                    options.AccessDeniedPath = new PathString("/Account/AccessDenied");
                 });
 
             var app = builder.Build();

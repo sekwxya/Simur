@@ -82,6 +82,10 @@ namespace TourAgency.Controllers
         };
             return new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
         }
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 
 }

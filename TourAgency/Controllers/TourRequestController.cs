@@ -23,5 +23,10 @@ namespace TourAgency.Controllers
         {
             return View(await _context.TourRequest.ToListAsync());
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }

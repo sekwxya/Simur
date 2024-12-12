@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,18 +22,12 @@ namespace TourAgency.Controllers
 
 
 
-        // GET: Tours
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Tour.Include(t => t.Discount);
             return View(await appDbContext.ToListAsync());
         }
-
-        //public IActionResult Discount()
-        //{
-        //    ViewData["DiscountId"] = new SelectList(_context.Discount, "DiscountId", "Name");
-        //    return View();
-        //}
 
         // GET: Tours/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -182,27 +177,6 @@ namespace TourAgency.Controllers
                 .ToListAsync();
 
             return View(statistics);
-        }
-
-        [HttpPost]
-        public IActionResult SubmitTourRequest(string preferences)
-        {
-            if (string.IsNullOrWhiteSpace(preferences))
-            {
-                return BadRequest("Комментарий не может быть пустым.");
-            }
-
-            var tourRequest = new TourRequest
-            {
-                Status = "На рассмотрении",
-                UserId = 1, // Установить ID пользователя вручную (например, для текущего юзера)
-                Preferences = preferences,
-            };
-
-            _context.Add(tourRequest);
-            _context.SaveChanges();
-
-            return Ok(new { message = "Заявка успешно отправлена!" });
         }
     }
 }
