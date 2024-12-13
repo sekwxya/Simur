@@ -1,0 +1,42 @@
+﻿@model IEnumerable<TourAgency.Models.CountryStatistics>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Статистика по странам отдыха</h1>
+
+<ul class="nav nav-tabs" id="tourTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" asp-controller="Tours" asp-action="Index">Tours</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" asp-controller="Discounts" asp-action="Index">Discount</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" asp-controller="TourRequest" asp-action="Index">TourRequests</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" asp-controller="Statistics" asp-action="Index">Статистика</a>
+    </li>
+</ul>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Страна</th>
+            <th>Количество туров</th>
+            <th>Средняя стоимость (₽)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stat in Model)
+        {
+            <tr>
+                <td>@stat.Country</td>
+                <td>@stat.TourCount</td>
+                <td>@stat.Revenue.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -12,7 +12,7 @@ using TourAgency.Data;
 namespace TourAgency.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241213055715_bigup")]
+    [Migration("20241213150931_bigup")]
     partial class bigup
     {
         /// <inheritdoc />
