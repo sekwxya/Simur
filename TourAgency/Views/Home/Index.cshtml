@@ -1,165 +1,118 @@
-﻿<style>
-    /* Центрирование кнопки внутри button-container */
-    .button-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh; /* Используем всю высоту страницы */
-        position: relative;
-    }
+﻿@{
+    ViewData["Title"] = "Главная страница";
+    var hotTours = ViewBag.HotTours as List<TourAgency.Models.Tour>;
+    var regularTours = ViewBag.RegularTours as List<TourAgency.Models.Tour>;
+}
 
-        /* Стили для кнопки внутри button-container */
-        .button-container .open-modal-btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50; /* Зеленый цвет */
-            color: white;
-            border: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-
-            /* Эффект наведения на кнопку */
-            .button-container .open-modal-btn:hover {
-                background-color: #45a049; /* Более темный зеленый цвет при наведении */
-            }
-
-    /* Модальное окно */
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-    }
-
-    /* Центрирование модального окна */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 400px;
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
-        overflow: hidden;
-    }
-
-    /* Стили для заголовка модального окна */
-    .modal-header {
-        font-size: 18px;
-        margin-bottom: 15px;
-        font-weight: bold;
-    }
-
-    /* Стили для формы внутри модального окна */
-    textarea {
-        width: 100%;
-        height: 100px;
-        padding: 10px;
-        margin-bottom: 20px;
-        font-size: 16px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-    }
-
-    /* Стили для кнопок внутри модального окна */
-    button {
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        margin: 5px;
-        border-radius: 4px;
-        border: none;
-    }
-
-    /* Кнопка закрытия */
-    .close-modal {
-        background-color: #f44336;
-        color: white;
-    }
-
-    /* Кнопка отправки */
-    button[type="submit"] {
-        background-color: #4CAF50;
-        color: white;
-    }
-
-    /* Кнопка внутри формы */
-    button[type="button"] {
-        background-color: #ccc;
-        color: white;
-    }
-
-</style>    
-
-<div class="button-container">
-        <button class="open-modal-btn" onclick="openModal()">Открыть форму</button>
-
-    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
-
-    <div class="modal" id="modal">
-        <div class="modal-header">Заявка на подбор</div>
-        <form id="modalForm">
-            <textarea name="preferences" placeholder="Комментарий. Примерный бюджет тура"></textarea>
-            <button type="submit">Отправить</button>
-            <button type="button" class="close-modal" onclick="closeModal()">Закрыть</button>
-        </form>
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tourRequestModal">Оставить заявку</button>
     </div>
 
-    <script>
-        // Открытие модального окна
-        function openModal() {
-            document.getElementById('modal').style.display = 'block';
-            document.getElementById('modalOverlay').style.display = 'block';
-        }
-
-        // Закрытие модального окна
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('modalOverlay').style.display = 'none';
-        }
-
-        // Обработка формы
-        document.getElementById('modalForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const preferences = this.preferences.value.trim();
-
-            if (!preferences) {
-                alert("Пожалуйста, заполните комментарий.");
-                return;
+    <h2 class="text-danger">Горячие туры</h2>
+    <div class="row">
+        @if (hotTours != null && hotTours.Any())
+        {
+            foreach (var tour in hotTours)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@tour.Title</h5>
+                            <p class="card-text">@tour.Description</p>
+                            <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
+                            <p><strong>Цена со скидкой:</strong> @tour.DiscountedPrice.ToString("C")</p>
+                            <p><strong>Страна:</strong> @tour.Country</p>
+                        </div>
+                    </div>
+                </div>
             }
+        }
+        else
+        {
+            <p>Нет горячих туров.</p>
+        }
+    </div>
 
-            fetch('/Home/SubmitTourRequest', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({ preferences }),
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error("Ошибка при отправке заявки.");
-                    }
-                })
-                .then(data => {
-                    alert(data.message);
-                    closeModal();
-                })
-                .catch(error => {
-                    alert(error.message);
-                });
-        });
-    </script>
+    <h2>Обычные туры</h2>
+    <div class="row">
+        @if (regularTours != null && regularTours.Any())
+        {
+            foreach (var tour in regularTours)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@tour.Title</h5>
+                            <p class="card-text">@tour.Description</p>
+                            <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
+                            <p><strong>Страна:</strong> @tour.Country</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Нет обычных туров.</p>
+        }
+    </div>
 </div>
+
+<!-- Модальное окно для заявки -->
+<div class="modal fade" id="tourRequestModal" tabindex="-1" aria-labelledby="tourRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tourRequestModalLabel">Оставить заявку на подбор тура</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="modalForm">
+                <div class="modal-body">
+                    <textarea name="preferences" class="form-control" rows="4" placeholder="Комментарий. Примерный бюджет тура"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Обработка формы
+    document.getElementById('modalForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const preferences = this.preferences.value.trim();
+
+        if (!preferences) {
+            alert("Пожалуйста, заполните комментарий.");
+            return;
+        }
+
+        fetch('/Home/SubmitTourRequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({ preferences }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Ошибка при отправке заявки.");
+                }
+            })
+            .then(data => {
+                alert(data.message);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('tourRequestModal'));
+                modal.hide();
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    });
+</script>

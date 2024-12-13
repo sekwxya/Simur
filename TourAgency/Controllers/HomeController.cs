@@ -18,8 +18,18 @@ namespace TourAgency.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var tours = await _context.Tour
+                .Include(t => t.Discount) // Включаем связанные скидки
+                .ToListAsync();
+
+            var hotTours = tours.Where(t => t.Discount != null && t.Discount.DiscountId == 2).ToList();
+            var regularTours = tours.Where(t => t.Discount == null || t.Discount.DiscountId != 2).ToList();
+
+            ViewBag.HotTours = hotTours;
+            ViewBag.RegularTours = regularTours;
+
             return View();
         }
 
