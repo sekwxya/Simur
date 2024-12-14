@@ -20,8 +20,6 @@ namespace TourAgency.Controllers
             _context = context;
         }
 
-
-
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {

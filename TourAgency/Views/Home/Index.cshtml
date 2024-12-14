@@ -23,6 +23,17 @@
                             <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
                             <p><strong>Цена со скидкой:</strong> @tour.DiscountedPrice.ToString("C")</p>
                             <p><strong>Страна:</strong> @tour.Country</p>
+                            <button class="btn btn-info"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#tourDetailsModal"
+                                    onclick="loadTourDetails(@tour.TourId)">
+                                Подробнее
+                            </button>
+                            <button id="addToPlanBtn-@tour.TourId"
+                                    class="btn btn-success"
+                                    onclick="addToTourPlan(@tour.TourId)">
+                                Добавить в Турплан
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -47,6 +58,17 @@
                             <p class="card-text">@tour.Description</p>
                             <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
                             <p><strong>Страна:</strong> @tour.Country</p>
+                            <button class="btn btn-info"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#tourDetailsModal"
+                                    onclick="loadTourDetails(@tour.TourId)">
+                                Подробнее
+                            </button>
+                            <button id="addToPlanBtn-@tour.TourId"
+                                    class="btn btn-success"
+                                    onclick="addToTourPlan(@tour.TourId)">
+                                Добавить в Турплан
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -56,6 +78,22 @@
         {
             <p>Нет обычных туров.</p>
         }
+    </div>
+</div>
+
+<!-- Модальное окно для подробностей -->
+<div class="modal fade" id="tourDetailsModal" tabindex="-1" aria-labelledby="tourDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tourDetailsModalLabel">Детали тура</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="tourDetailsContent">
+                <!-- Заглушка -->
+                <p>Загрузка информации...</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -81,7 +119,53 @@
 </div>
 
 <script>
-    // Обработка формы
+    // Загрузка подробностей тура
+    function loadTourDetails(tourId) {
+        fetch(`/Home/GetTourDetails/${tourId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Ошибка загрузки деталей тура.");
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById('tourDetailsContent').innerHTML = data;
+            })
+            .catch(error => {
+                document.getElementById('tourDetailsContent').innerHTML = `<p>${error.message}</p>`;
+            });
+    }
+
+    // Добавление в Турплан с изменением состояния кнопки
+    function addToTourPlan(tourId) {
+        fetch('/Home/AddToTourPlan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({ tourId: tourId })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Данный тур уже добавлен в турплан.");
+            }
+        })
+        .then(data => {
+            alert(data.message);
+
+            // Находим кнопку по id и изменяем её внешний вид
+            const button = document.getElementById(`addToPlanBtn-${tourId}`);
+            button.classList.remove('btn-success'); // Убираем текущий класс
+            button.classList.add('btn-secondary'); // Добавляем серый цвет
+            button.textContent = 'Добавлено в Турплан'; // Меняем текст
+            button.disabled = true; // Делаем кнопку неактивной
+        })
+        .catch(error => {
+            alert(error.message);
+        });
+    }
+
+    // Обработка формы заявки
     document.getElementById('modalForm').addEventListener('submit', function (e) {
         e.preventDefault();
 

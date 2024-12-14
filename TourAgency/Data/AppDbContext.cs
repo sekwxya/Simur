@@ -19,5 +19,7 @@ namespace TourAgency.Data
         public DbSet<TourPlan> TourPlan { get; set; }
         public DbSet<TourRequest> TourRequest { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<TourHistory> TourHistory { get; set; }
+        
     }
 }
