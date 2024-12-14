@@ -8,8 +8,9 @@ namespace TourAgency.Models
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; } // "Visitor" или "TourManager"
-        public int LoyaltyPoints { get; set; } // Бонусные баллы
+        public string Role { get; set; }
+        public int LoyaltyPoints { get; set; }
+        public decimal Balance { get; set; }
         public List<Review> Reviews { get; set; } = [];
         public List<TourRequest> TourRequests { get; set; } = [];
     }

@@ -1,0 +1,61 @@
+﻿@model IEnumerable<TourAgency.Models.TourPlan>
+
+@{
+    ViewData["Title"] = "Турплан";
+}
+
+<div class="container mt-4">
+    <h1>Турплан</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Название тура</th>
+                <th>Описание</th>
+                <th>Страна</th>
+                <th>Цена</th>
+                <th>Даты</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Tour.Title</td>
+                    <td>@item.Tour.Description</td>
+                    <td>@item.Tour.Country</td>
+                    <td>@item.Tour.DiscountedPrice.ToString("C")</td>
+                    <td>@item.Tour.StartDate.ToShortDateString() - @item.Tour.EndDate.ToShortDateString()</td>
+                    <td>
+                        <form asp-action="RemoveFromCart" method="post" class="d-inline">
+                            <input type="hidden" name="tourPlanId" value="@item.TourPlanId" />
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Удалить
+                            </button>
+                        </form>
+                        <form asp-action="MoveToTourHistory" method="post" class="d-inline ms-2">
+                            <input type="hidden" name="tourPlanId" value="@item.TourPlanId" />
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Добавить в Историю
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="modal fade" id="tourDetailsModal" tabindex="-1" aria-labelledby="tourDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tourDetailsModalLabel">Подтверждение покупки</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="tourDetailsContent">
+                <!-- Заглушка -->
+                <p>Загрузка информации...</p>
+            </div>
+        </div>
+    </div>
+</div>
