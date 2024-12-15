@@ -8,50 +8,37 @@
 
 <ul class="nav nav-tabs" id="tourTabs" role="tablist">
     <li class="nav-item" role="presentation">
-        <a class="nav-link active" asp-controller="Tours" asp-action="Index">Tours</a>
+        <a class="nav-link active" asp-controller="Tours" asp-action="Index" aria-selected="false">Туры</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" asp-controller="Discounts" asp-action="Index">Discount</a>
+        <a class="nav-link" asp-controller="Discounts" asp-action="Index">Скидки</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" asp-controller="TourRequest" asp-action="Index">TourRequests</a>
+        <a class="nav-link" asp-controller="TourRequest" asp-action="Index">Запросы на подбор тура</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" asp-controller="Statistics" asp-action="Index">Статистика</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Balances" asp-action="Index">Баланс</a>
+    </li>
     <li class="nav-item ms-auto" role="presentation">
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
     </li>
 </ul>
 
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Country)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Discount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiscountedPrice)
-            </th>
-            <th></th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Страна</th>
+            <th>Цена</th>
+            <th>Дата начала</th>
+            <th>Дата оканчания</th>
+            <th>Скидка</th>
+            <th>Цена со скидкой</th>
+            <th>Действия</th>
         </tr>
     </thead>
     <tbody>
@@ -82,9 +69,9 @@
                     @Html.DisplayFor(modelItem => item.DiscountedPrice)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.TourId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.TourId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.TourId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.TourId">Редактировать</a> |
+                <a asp-action="Details" asp-route-id="@item.TourId">Подробнее</a> |
+                <a asp-action="Delete" asp-route-id="@item.TourId">Удалить</a>
             </td>
         </tr>
 }

@@ -8,16 +8,19 @@
 
 <ul class="nav nav-tabs" id="tourTabs" role="tablist">
     <li class="nav-item" role="presentation">
-        <a class="nav-link" asp-controller="Tours" asp-action="Index">Tours</a>
+        <a class="nav-link" asp-controller="Tours" asp-action="Index" aria-selected="false">Туры</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" asp-controller="Discounts" asp-action="Index">Discount</a>
+        <a class="nav-link" asp-controller="Discounts" asp-action="Index">Скидки</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" asp-controller="TourRequest" asp-action="Index">TourRequests</a>
+        <a class="nav-link" asp-controller="TourRequest" asp-action="Index">Запросы на подбор тура</a>
     </li>
     <li class="nav-item">
         <a class="nav-link active" asp-controller="Statistics" asp-action="Index">Статистика</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Balances" asp-action="Index">Баланс</a>
     </li>
 </ul>
 
