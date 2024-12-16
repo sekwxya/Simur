@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TourAgency.Data;
 using TourAgency.Models;
+using System.Security.Claims;
 
 namespace TourAgency.Controllers
 {
+    [Authorize]
     public class PersonalAccountController : Controller
     {
         private readonly AppDbContext _context;
@@ -12,14 +16,23 @@ namespace TourAgency.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+
+        public async Task<IActionResult> Index()
         {
-            var user = new User
+            var userEmail = User.FindFirstValue(ClaimTypes.Name);
+
+            if (userEmail == null)
             {
-                FullName = "Имя Пользователя",
-                Balance = 12500.75m,
-                LoyaltyPoints = 320
-            };
+                return Unauthorized("Пользователь не авторизован.");
+            }
+
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            if (user == null)
+            {
+                return NotFound("Пользователь не найден.");
+            }
+
             return View(user);
         }
     }
