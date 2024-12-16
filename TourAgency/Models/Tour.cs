@@ -19,5 +19,6 @@ namespace TourAgency.Models
         public decimal DiscountedPrice => Discount != null
            ? Price * (1 - Discount.DiscountPercentage / 100)
            : Price;
+        public double AverageRating => reviews.Any() ? reviews.Average(r => r.Rating) : 0;
     }
 }

@@ -2,12 +2,15 @@
     ViewData["Title"] = "Главная страница";
     var hotTours = ViewBag.HotTours as List<TourAgency.Models.Tour>;
     var regularTours = ViewBag.RegularTours as List<TourAgency.Models.Tour>;
+    var recommendedTours = ViewBag.RecommendedTours as List<TourAgency.Models.Tour>;
 }
 
 <div class="container mt-4">
     <div class="text-center mb-4">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tourRequestModal">Оставить заявку</button>
     </div>
+
+
 
     <h2 class="text-danger">Горячие туры</h2>
     <div class="row">
@@ -22,6 +25,7 @@
                             <p class="card-text">@tour.Description</p>
                             <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
                             <p><strong>Цена со скидкой:</strong> @tour.DiscountedPrice.ToString("C")</p>
+                            <p><strong>Рейтинг:</strong> @tour.AverageRating.ToString("F1")</p>
                             <p><strong>Страна:</strong> @tour.Country</p>
                             <button class="btn btn-info"
                                     data-bs-toggle="modal"
@@ -45,6 +49,42 @@
         }
     </div>
 
+    <h2 class="text-success">Рекомендованные туры</h2>
+    <div class="row">
+        @if (recommendedTours != null && recommendedTours.Any())
+        {
+            foreach (var tour in recommendedTours)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@tour.Title</h5>
+                            <p class="card-text">@tour.Description</p>
+                            <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
+                            <p><strong>Рейтинг:</strong> @tour.AverageRating.ToString("F1")</p>
+                            <p><strong>Страна:</strong> @tour.Country</p>
+                            <button class="btn btn-info"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#tourDetailsModal"
+                                    onclick="loadTourDetails(@tour.TourId)">
+                                Подробнее
+                            </button>
+                            <button id="addToPlanBtn-@tour.TourId"
+                                    class="btn btn-success"
+                                    onclick="addToTourPlan(@tour.TourId)">
+                                Добавить в Турплан
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Нет рекомендаций для вас.</p>
+        }
+    </div>
+
     <h2>Обычные туры</h2>
     <div class="row">
         @if (regularTours != null && regularTours.Any())
@@ -57,6 +97,7 @@
                             <h5 class="card-title">@tour.Title</h5>
                             <p class="card-text">@tour.Description</p>
                             <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
+                            <p><strong>Рейтинг:</strong> @tour.AverageRating.ToString("F1")</p>
                             <p><strong>Страна:</strong> @tour.Country</p>
                             <button class="btn btn-info"
                                     data-bs-toggle="modal"
@@ -143,26 +184,26 @@
             },
             body: new URLSearchParams({ tourId: tourId })
         })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error("Данный тур уже добавлен в турплан.");
-            }
-        })
-        .then(data => {
-            alert(data.message);
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Данный тур уже добавлен в турплан.");
+                }
+            })
+            .then(data => {
+                alert(data.message);
 
-            // Находим кнопку по id и изменяем её внешний вид
-            const button = document.getElementById(`addToPlanBtn-${tourId}`);
-            button.classList.remove('btn-success'); // Убираем текущий класс
-            button.classList.add('btn-secondary'); // Добавляем серый цвет
-            button.textContent = 'Добавлено в Турплан'; // Меняем текст
-            button.disabled = true; // Делаем кнопку неактивной
-        })
-        .catch(error => {
-            alert(error.message);
-        });
+                // Находим кнопку по id и изменяем её внешний вид
+                const button = document.getElementById(`addToPlanBtn-${tourId}`);
+                button.classList.remove('btn-success'); // Убираем текущий класс
+                button.classList.add('btn-secondary'); // Добавляем серый цвет
+                button.textContent = 'Добавлено в Турплан'; // Меняем текст
+                button.disabled = true; // Делаем кнопку неактивной
+            })
+            .catch(error => {
+                alert(error.message);
+            });
     }
 
     // Обработка формы заявки
