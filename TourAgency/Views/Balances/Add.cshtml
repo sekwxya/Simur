@@ -1,0 +1,29 @@
+﻿@model TourAgency.Models.User
+
+@{
+    ViewData["Title"] = "Добавить баланс";
+}
+
+<h1>Добавить баланс пользователю</h1>
+
+<p><strong>Пользователь:</strong> @Model.FullName</p>
+<p><strong>Текущий баланс:</strong> @Model.Balance</p>
+
+<form asp-action="Add" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <div class="form-group">
+        <label for="amount">Сумма для добавления</label>
+        <input type="number" step="0.01" class="form-control" id="amount" name="amount" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить баланс</button>
+    <div>
+        <a asp-action="Index">Назад</a>
+    </div>
+</form>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3">
+        @TempData["SuccessMessage"]
+    </div>
+}
