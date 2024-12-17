@@ -5,83 +5,96 @@
     var user = ViewData["User"] as TourAgency.Models.User;
 }
 
-<div class="container mt-4">
-    <h1>Турплан</h1>
+<div class="container mt-5">
+    <!-- Заголовок страницы -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">Мои Турпланы</h1>
+        @if (user != null)
+        {
+            <div class="text-end">
+                <h5>Баланс: <span class="text-success">@user.Balance.ToString("C")</span></h5>
+                <h5>Бонусы: <span class="text-warning">@user.LoyaltyPoints</span></h5>
+            </div>
+        }
+    </div>
 
-    @if (user != null)
-    {
-        <div class="mb-4">
-            <h5>Баланс: @user.Balance.ToString("C")</h5>
-            <h5>Бонусные баллы: @user.LoyaltyPoints</h5>
-        </div>
-    }
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Название тура</th>
-                <th>Описание</th>
-                <th>Страна</th>
-                <th>Цена</th>
-                <th>Даты</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                var discountedPrice = item.Tour.DiscountedPrice;
-                var priceWithLoyalty = Math.Max(1, discountedPrice - user.LoyaltyPoints);
-
+    <!-- Таблица туров -->
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle shadow-sm">
+            <thead class="table-dark text-center">
                 <tr>
-                    <td>@item.Tour.Title</td>
-                    <td>@item.Tour.Description</td>
-                    <td>@item.Tour.Country</td>
-                    <td>@discountedPrice.ToString("C")</td>
-                    <td>@item.Tour.StartDate.ToShortDateString() - @item.Tour.EndDate.ToShortDateString()</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmPurchaseModal"
-                                data-tour-plan-id="@item.TourPlanId"
-                                data-tour-title="@item.Tour.Title"
-                                data-discounted-price="@discountedPrice"
-                                data-price-with-loyalty="@priceWithLoyalty"
-                                data-user-balance="@user.Balance"
-                                data-user-loyalty="@user.LoyaltyPoints">
-                            Купить
-                        </button>
-                        <form asp-action="RemoveFromCart" method="post" class="d-inline">
-                            <input type="hidden" name="tourPlanId" value="@item.TourPlanId" />
-                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
-                        </form>
-                    </td>
+                    <th>Название тура</th>
+                    <th>Описание</th>
+                    <th>Страна</th>
+                    <th>Цена</th>
+                    <th>Даты</th>
+                    <th>Действия</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var discountedPrice = item.Tour.DiscountedPrice;
+                    var priceWithLoyalty = Math.Max(1, discountedPrice - user.LoyaltyPoints);
+
+                    <tr>
+                        <td>@item.Tour.Title</td>
+                        <td>@item.Tour.Description</td>
+                        <td>@item.Tour.Country</td>
+                        <td class="text-end text-primary fw-bold">@discountedPrice.ToString("C")</td>
+                        <td class="text-center">@item.Tour.StartDate.ToShortDateString() - @item.Tour.EndDate.ToShortDateString()</td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmPurchaseModal"
+                                    data-tour-plan-id="@item.TourPlanId"
+                                    data-tour-title="@item.Tour.Title"
+                                    data-discounted-price="@discountedPrice"
+                                    data-price-with-loyalty="@priceWithLoyalty"
+                                    data-user-balance="@user.Balance"
+                                    data-user-loyalty="@user.LoyaltyPoints">
+                                Купить
+                            </button>
+                            <form asp-action="RemoveFromCart" method="post" class="d-inline">
+                                <input type="hidden" name="tourPlanId" value="@item.TourPlanId" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Модальное окно для подтверждения покупки -->
 <div class="modal fade" id="confirmPurchaseModal" tabindex="-1" aria-labelledby="confirmPurchaseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="confirmPurchaseModalLabel">Подтверждение покупки</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Вы собираетесь приобрести тур <strong id="modalTourTitle"></strong>.</p>
-                <p>Цена: <span id="modalDiscountedPrice"></span></p>
-                <p>Цена с бонусами: <span id="modalPriceWithLoyalty"></span></p>
-                <p>Ваш баланс: <strong id="modalUserBalance"></strong></p>
-                <p>Ваши бонусы: <strong id="modalUserLoyalty"></strong></p>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <p>Вы собираетесь приобрести тур: <strong id="modalTourTitle" class="text-primary"></strong></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Цена: <span id="modalDiscountedPrice" class="text-danger fw-bold"></span></p>
+                        <p>Цена с бонусами: <span id="modalPriceWithLoyalty" class="text-success fw-bold"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Ваш баланс: <strong id="modalUserBalance" class="text-primary"></strong></p>
+                        <p>Ваши бонусы: <strong id="modalUserLoyalty" class="text-warning"></strong></p>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer">
-                <form id="purchaseWithoutBonusesForm" asp-action="ConfirmPurchase" method="post" class="d-inline">
+            <div class="modal-footer justify-content-between">
+                <form id="purchaseWithoutBonusesForm" asp-action="ConfirmPurchase" method="post">
                     <input type="hidden" name="tourPlanId" id="tourPlanIdWithoutBonuses" />
                     <input type="hidden" name="useLoyaltyPoints" value="false" />
                     <button type="submit" class="btn btn-primary">Купить без бонусов</button>
                 </form>
-                <form id="purchaseWithBonusesForm" asp-action="ConfirmPurchase" method="post" class="d-inline">
+                <form id="purchaseWithBonusesForm" asp-action="ConfirmPurchase" method="post">
                     <input type="hidden" name="tourPlanId" id="tourPlanIdWithBonuses" />
                     <input type="hidden" name="useLoyaltyPoints" value="true" />
                     <button type="submit" id="btnPurchaseWithBonuses" class="btn btn-success">Купить с бонусами</button>

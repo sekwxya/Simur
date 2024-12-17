@@ -1,27 +1,45 @@
 ﻿@model TourAgency.Models.User
 
 <div class="container mt-5">
-    <h2>Добро пожаловать, @Model.FullName!</h2>
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    Баланс
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="display-5 fw-bold">Добро пожаловать, <span class="text-primary">@Model.FullName!</span></h2>
+            <p class="lead text-muted">Рады видеть вас в нашем туристическом агентстве</p>
+        </div>
+    </div>
+
+    <!-- User Info Cards -->
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-header text-white bg-primary text-center">
+                    <h5 class="mb-0">Баланс</h5>
                 </div>
-                <div class="card-body">
-                    <h4>@Model.Balance.ToString("C")</h4>
+                <div class="card-body text-center">
+                    <h3 class="fw-bold">@Model.Balance.ToString("C")</h3>
+                    <p class="text-muted mb-0">Текущий баланс вашего счёта</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    Бонусные баллы
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-header text-white bg-success text-center">
+                    <h5 class="mb-0">Бонусные баллы</h5>
                 </div>
-                <div class="card-body">
-                    <h4>@Model.LoyaltyPoints</h4>
+                <div class="card-body text-center">
+                    <h3 class="fw-bold">@Model.LoyaltyPoints</h3>
+                    <p class="text-muted mb-0">Ваши накопленные бонусы</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <p class="text-secondary small">Спасибо, что выбираете нас. Ваши путешествия начинаются здесь!</p>
         </div>
     </div>
 </div>

@@ -1,8 +1,13 @@
 ﻿@model IEnumerable<TourAgency.Models.User>
 
-<h1>Список пользователей</h1>
+@{
+    ViewData["Title"] = "Список пользователей";
+}
 
-<ul class="nav nav-tabs" id="tourTabs" role="tablist">
+<h1 class="mb-4">Список пользователей</h1>
+
+<!-- Навигационные вкладки -->
+<ul class="nav nav-tabs mb-4" id="tourTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <a class="nav-link" asp-controller="Tours" asp-action="Index" aria-selected="false">Туры</a>
     </li>
@@ -12,20 +17,21 @@
     <li class="nav-item" role="presentation">
         <a class="nav-link" asp-controller="TourRequest" asp-action="Index">Запросы на подбор тура</a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" role="presentation">
         <a class="nav-link" asp-controller="Statistics" asp-action="Index">Статистика</a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" role="presentation">
         <a class="nav-link active" asp-controller="Balances" asp-action="Index">Баланс</a>
     </li>
 </ul>
 
-<table class="table">
-    <thead>
+<!-- Таблица пользователей -->
+<table class="table table-striped table-hover align-middle shadow-sm">
+    <thead class="table-dark text-center">
         <tr>
             <th>Имя</th>
             <th>Email</th>
-            <th>Баланс</th>
+            <th>Баланс (₽)</th>
             <th>Действия</th>
         </tr>
     </thead>
@@ -33,11 +39,14 @@
         @foreach (var user in Model)
         {
             <tr>
-                <td>@user.FullName</td>
+                <td class="text-primary fw-bold">@user.FullName</td>
                 <td>@user.Email</td>
-                <td>@user.Balance</td>
-                <td>
-                    <a asp-controller="Balances" asp-action="Add" asp-route-id="@user.UserId" class="btn btn-primary">Добавить баланс</a>
+                <td class="text-center">@user.Balance.ToString("C", new System.Globalization.CultureInfo("ru-RU"))</td>
+                <td class="text-center">
+                    <a asp-controller="Balances" asp-action="Add" asp-route-id="@user.UserId"
+                       class="btn btn-success btn-sm">
+                        <i class="bi bi-plus-circle"></i> Добавить баланс
+                    </a>
                 </td>
             </tr>
         }

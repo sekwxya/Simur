@@ -1,12 +1,13 @@
 ﻿@model IEnumerable<TourAgency.Models.CountryStatistics>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Статистика по странам отдыха";
 }
 
-<h1>Статистика по странам отдыха</h1>
+<h1 class="mb-4">Статистика по странам отдыха</h1>
 
-<ul class="nav nav-tabs" id="tourTabs" role="tablist">
+<!-- Навигационные вкладки -->
+<ul class="nav nav-tabs mb-4" id="tourTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <a class="nav-link" asp-controller="Tours" asp-action="Index" aria-selected="false">Туры</a>
     </li>
@@ -16,16 +17,22 @@
     <li class="nav-item" role="presentation">
         <a class="nav-link" asp-controller="TourRequest" asp-action="Index">Запросы на подбор тура</a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" role="presentation">
         <a class="nav-link active" asp-controller="Statistics" asp-action="Index">Статистика</a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" role="presentation">
         <a class="nav-link" asp-controller="Balances" asp-action="Index">Баланс</a>
+    </li>
+    <li class="nav-item ms-auto" role="presentation">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Добавить статистику
+        </a>
     </li>
 </ul>
 
-<table class="table table-bordered">
-    <thead>
+<!-- Таблица статистики -->
+<table class="table table-striped table-hover align-middle shadow-sm">
+    <thead class="table-dark text-center">
         <tr>
             <th>Страна</th>
             <th>Количество туров</th>
@@ -36,9 +43,15 @@
         @foreach (var stat in Model)
         {
             <tr>
-                <td>@stat.Country</td>
-                <td>@stat.TourCount</td>
-                <td>@stat.Revenue.ToString("C")</td>
+                <td class="fw-bold text-primary text-center">
+                    @stat.Country
+                </td>
+                <td class="text-center">
+                    @stat.TourCount
+                </td>
+                <td class="text-center">
+                    @stat.Revenue.ToString("C", new System.Globalization.CultureInfo("ru-RU"))
+                </td>
             </tr>
         }
     </tbody>
