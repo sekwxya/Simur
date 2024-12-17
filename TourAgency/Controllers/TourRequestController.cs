@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TourAgency.Data;
 using TourAgency.Models;
 
 namespace TourAgency.Controllers
 {
+    [Authorize]
     public class TourRequestController : Controller
     {
         private readonly AppDbContext _context;
@@ -89,6 +92,33 @@ namespace TourAgency.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // Заявки текущего пользователя
+        public async Task<IActionResult> UserRequests()
+        {
+            // Получаем Email текущего пользователя
+            var userEmail = User.FindFirstValue(ClaimTypes.Name);
+
+            if (userEmail == null)
+            {
+                return Unauthorized("Пользователь не авторизован.");
+            }
+
+            // Получаем UserId текущего пользователя
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == userEmail);
+            if (user == null)
+            {
+                return NotFound("Пользователь не найден.");
+            }
+
+            // Получаем все заявки текущего пользователя
+            var userRequests = await _context.TourRequest
+                .Include(tr => tr.Tour) // Включаем информацию о туре
+                .Where(tr => tr.UserId == user.UserId)
+                .ToListAsync();
+
+            return View(userRequests);
         }
     }
 }

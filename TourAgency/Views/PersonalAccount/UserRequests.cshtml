@@ -1,0 +1,44 @@
+﻿@model IEnumerable<TourAgency.Models.TourRequest>
+
+@{
+    ViewData["Title"] = "Мои заявки на подбор тура";
+}
+
+<h1>Мои заявки на подбор тура</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Статус</th>
+            <th>Предпочтения</th>
+            <th>Рекомендованный тур</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@request.TourRequestId</td>
+                <td>@request.Status</td>
+                <td>@request.Preferences</td>
+                <td>
+                    @if (request.Tour != null)
+                    {
+                        @request.Tour.Title
+                    }
+                    else
+                    {
+                        <span>Не назначен</span>
+                    }
+                </td>
+                <td>
+                    <a asp-controller="TourRequest" asp-action="Details" asp-route-id="@request.TourRequestId" class="btn btn-primary btn-sm">
+                        Детали
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
