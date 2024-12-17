@@ -8,32 +8,31 @@
 
 <ul class="nav nav-tabs" id="tourTabs" role="tablist">
     <li class="nav-item" role="presentation">
-        <a class="nav-link" asp-controller="Tours" asp-action="Index">Tours</a>
+        <a class="nav-link" asp-controller="Tours" asp-action="Index" aria-selected="false">Туры</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link active" asp-controller="Discounts" asp-action="Index">Discount</a>
+        <a class="nav-link active" asp-controller="Discounts" asp-action="Index">Скидки</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" asp-controller="TourRequest" asp-action="Index">TourRequests</a>
+        <a class="nav-link" asp-controller="TourRequest" asp-action="Index">Запросы на подбор тура</a>
     </li>
-    <li class="nav-item" role="presentation">
+    <li class="nav-item">
         <a class="nav-link" asp-controller="Statistics" asp-action="Index">Статистика</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Balances" asp-action="Index">Баланс</a>
+    </li>
     <li class="nav-item ms-auto" role="presentation">
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
     </li>
 </ul>
 
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiscountPercentage)
-            </th>
-            <th></th>
+            <th>Имя</th>
+            <th>Процент скидки</th>
+            <th>Действия</th>
         </tr>
     </thead>
     <tbody>
@@ -46,9 +45,9 @@
                 @Html.DisplayFor(modelItem => item.DiscountPercentage)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.DiscountId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DiscountId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DiscountId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.DiscountId">Редактировать</a> |
+                <a asp-action="Details" asp-route-id="@item.DiscountId">Подробнее</a> |
+                <a asp-action="Delete" asp-route-id="@item.DiscountId">Удалить</a>
             </td>
         </tr>
 }

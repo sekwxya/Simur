@@ -1,0 +1,32 @@
+﻿@model TourAgency.Models.Tour
+
+<div class="container">
+    <h2>Детали тура: @Model.Title</h2>
+    <hr />
+    <p><strong>Описание:</strong> @Model.Description</p>
+    <p><strong>Цена:</strong> @Model.DiscountedPrice.ToString("C")</p>
+    <p><strong>Страна:</strong> @Model.Country</p>
+    <p><strong>Средний рейтинг:</strong> @Model.AverageRating.ToString("F1")</p>
+
+    <hr />
+
+    <!-- Секция отзывов -->
+    <h4>Отзывы о туре</h4>
+    @if (Model.reviews != null && Model.reviews.Any())
+    {
+        <ul class="list-group">
+            @foreach (var review in Model.reviews)
+            {
+                <li class="list-group-item">
+                    <p><strong>Пользователь:</strong> @review.User.FullName</p>
+                    <p><strong>Комментарий:</strong> @review.Comment</p>
+                    <p><strong>Рейтинг:</strong> @review.Rating из 5</p>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Пока нет отзывов об этом туре.</p>
+    }
+</div>

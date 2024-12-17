@@ -5,7 +5,6 @@ using System.Security.Claims;
 using TourAgency.Data;
 using TourAgency.Models;
 
-
 namespace TourAgency.Controllers
 {
     public class HomeController : Controller
@@ -20,14 +19,35 @@ namespace TourAgency.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            var email = User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
             var tours = await _context.Tour
-                .Include(t => t.Discount) // Включаем связанные скидки
+                .Include(t => t.Discount)
+                .Include(t => t.reviews)
                 .ToListAsync();
 
-            var hotTours = tours.Where(t => t.Discount != null && t.Discount.DiscountId == 2).ToList(); //kal
+            // Горячие туры (по конкретной скидке)
+            var hotTours = tours.Where(t => t.Discount != null && t.Discount.DiscountId == 2).ToList();
+
+            // Рекомендации (только с высоким средним рейтингом и ограничение на 5)
+            var recommendedTours = tours
+                .Where(t => t.AverageRating >= 4 &&
+                            !_context.TourHistory.Any(th => th.UserId == user.UserId && th.TourId == t.TourId))
+                .OrderByDescending(t => t.AverageRating)
+                .Take(5)
+                .ToList();
+
+            // Обычные туры (оставшиеся, без учета фильтров для рекомендаций)
             var regularTours = tours.Where(t => t.Discount == null || t.Discount.DiscountId != 2).ToList();
 
             ViewBag.HotTours = hotTours;
+            ViewBag.RecommendedTours = recommendedTours;
             ViewBag.RegularTours = regularTours;
 
             return View();
@@ -37,9 +57,10 @@ namespace TourAgency.Controllers
         [HttpPost]
         public IActionResult SubmitTourRequest(string preferences)
         {
-            var email = User.FindFirst(ClaimTypes.Name).Value;
+            var email = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = _context.User.FirstOrDefault(x => x.Email == email);
-            if (string.IsNullOrWhiteSpace(preferences))
+
+            if (user == null || string.IsNullOrWhiteSpace(preferences))
             {
                 return BadRequest("Комментарий не может быть пустым.");
             }
@@ -47,7 +68,7 @@ namespace TourAgency.Controllers
             var tourRequest = new TourRequest
             {
                 Status = "На рассмотрении",
-                UserId = user.UserId, // Установить ID пользователя вручную (например, для текущего юзера)
+                UserId = user.UserId,
                 Preferences = preferences,
             };
 
@@ -61,7 +82,7 @@ namespace TourAgency.Controllers
         [HttpPost]
         public IActionResult AddToTourPlan(int tourId)
         {
-            var email = User.FindFirst(ClaimTypes.Name).Value;
+            var email = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = _context.User.FirstOrDefault(x => x.Email == email);
 
             if (user == null)
@@ -87,9 +108,25 @@ namespace TourAgency.Controllers
             return Ok(new { message = "Тур успешно добавлен в Турплан!" });
         }
 
-        public IActionResult Urna() 
-        { 
-            return Redirect("https://ru.wikipedia.org/wiki/%D0%9F%D0%BE%D0%B3%D1%80%D0%B5%D0%B1%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F_%D1%83%D1%80%D0%BD%D0%B0");
+        public async Task<IActionResult> TourDetails(int id)
+        {
+            var tour = await _context.Tour
+                .Include(t => t.reviews)
+                 .ThenInclude(r => r.User) // Включаем пользователей, оставивших отзывы
+                .FirstOrDefaultAsync(t => t.TourId == id);
+
+            if (tour == null)
+            {
+                return NotFound("Тур не найден.");
+            }
+
+            return View(tour); // Передаем тур и отзывы в представление
+        }
+
+
+        public IActionResult Urna()
+        {
+            return RedirectToAction("AccessDenied", "Account");
         }
     }
 }

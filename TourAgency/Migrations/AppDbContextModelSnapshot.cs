@@ -199,10 +199,15 @@ namespace TourAgency.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("text");
 
+                    b.Property<int?>("TourId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("TourRequestId");
+
+                    b.HasIndex("TourId");
 
                     b.HasIndex("UserId");
 
@@ -314,11 +319,17 @@ namespace TourAgency.Migrations
 
             modelBuilder.Entity("TourAgency.Models.TourRequest", b =>
                 {
+                    b.HasOne("TourAgency.Models.Tour", "Tour")
+                        .WithMany()
+                        .HasForeignKey("TourId");
+
                     b.HasOne("TourAgency.Models.User", "User")
                         .WithMany("TourRequests")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Tour");
 
                     b.Navigation("User");
                 });

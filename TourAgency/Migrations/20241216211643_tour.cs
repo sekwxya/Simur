@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TourAgency.Migrations
 {
     /// <inheritdoc />
-    public partial class bigup : Migration
+    public partial class tour : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,8 @@ namespace TourAgency.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
                     Role = table.Column<string>(type: "text", nullable: false),
-                    LoyaltyPoints = table.Column<int>(type: "integer", nullable: false)
+                    LoyaltyPoints = table.Column<int>(type: "integer", nullable: false),
+                    Balance = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,27 +85,6 @@ namespace TourAgency.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TourRequest",
-                columns: table => new
-                {
-                    TourRequestId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    Preferences = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TourRequest", x => x.TourRequestId);
-                    table.ForeignKey(
-                        name: "FK_TourRequest_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Rewiew",
                 columns: table => new
                 {
@@ -126,6 +106,33 @@ namespace TourAgency.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Rewiew_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TourHistory",
+                columns: table => new
+                {
+                    TourHistoryId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    TourId = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TourHistory", x => x.TourHistoryId);
+                    table.ForeignKey(
+                        name: "FK_TourHistory_Tour_TourId",
+                        column: x => x.TourId,
+                        principalTable: "Tour",
+                        principalColumn: "TourId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TourHistory_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -158,6 +165,33 @@ namespace TourAgency.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TourRequest",
+                columns: table => new
+                {
+                    TourRequestId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Preferences = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: true),
+                    TourId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TourRequest", x => x.TourRequestId);
+                    table.ForeignKey(
+                        name: "FK_TourRequest_Tour_TourId",
+                        column: x => x.TourId,
+                        principalTable: "Tour",
+                        principalColumn: "TourId");
+                    table.ForeignKey(
+                        name: "FK_TourRequest_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Rewiew_TourId",
                 table: "Rewiew",
@@ -174,6 +208,16 @@ namespace TourAgency.Migrations
                 column: "DiscountId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TourHistory_TourId",
+                table: "TourHistory",
+                column: "TourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TourHistory_UserId",
+                table: "TourHistory",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TourPlan_TourId",
                 table: "TourPlan",
                 column: "TourId");
@@ -182,6 +226,11 @@ namespace TourAgency.Migrations
                 name: "IX_TourPlan_UserId",
                 table: "TourPlan",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TourRequest_TourId",
+                table: "TourRequest",
+                column: "TourId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TourRequest_UserId",
@@ -197,6 +246,9 @@ namespace TourAgency.Migrations
 
             migrationBuilder.DropTable(
                 name: "Rewiew");
+
+            migrationBuilder.DropTable(
+                name: "TourHistory");
 
             migrationBuilder.DropTable(
                 name: "TourPlan");

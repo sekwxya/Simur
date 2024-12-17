@@ -12,8 +12,8 @@ using TourAgency.Data;
 namespace TourAgency.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241213150931_bigup")]
-    partial class bigup
+    [Migration("20241216211643_tour")]
+    partial class tour
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -137,6 +137,33 @@ namespace TourAgency.Migrations
                     b.ToTable("Tour");
                 });
 
+            modelBuilder.Entity("TourAgency.Models.TourHistory", b =>
+                {
+                    b.Property<int>("TourHistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TourHistoryId"));
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TourId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TourHistoryId");
+
+                    b.HasIndex("TourId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TourHistory");
+                });
+
             modelBuilder.Entity("TourAgency.Models.TourPlan", b =>
                 {
                     b.Property<int>("TourPlanId")
@@ -175,10 +202,15 @@ namespace TourAgency.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("text");
 
+                    b.Property<int?>("TourId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("TourRequestId");
+
+                    b.HasIndex("TourId");
 
                     b.HasIndex("UserId");
 
@@ -192,6 +224,9 @@ namespace TourAgency.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -247,6 +282,25 @@ namespace TourAgency.Migrations
                     b.Navigation("Discount");
                 });
 
+            modelBuilder.Entity("TourAgency.Models.TourHistory", b =>
+                {
+                    b.HasOne("TourAgency.Models.Tour", "Tour")
+                        .WithMany()
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TourAgency.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tour");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TourAgency.Models.TourPlan", b =>
                 {
                     b.HasOne("TourAgency.Models.Tour", "Tour")
@@ -268,11 +322,17 @@ namespace TourAgency.Migrations
 
             modelBuilder.Entity("TourAgency.Models.TourRequest", b =>
                 {
+                    b.HasOne("TourAgency.Models.Tour", "Tour")
+                        .WithMany()
+                        .HasForeignKey("TourId");
+
                     b.HasOne("TourAgency.Models.User", "User")
                         .WithMany("TourRequests")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Tour");
 
                     b.Navigation("User");
                 });

@@ -1,0 +1,59 @@
+﻿@model TourAgency.Models.TourRequest
+
+@{
+    ViewData["Title"] = "Детали заявки";
+}
+
+<h1>Детали заявки</h1>
+
+<div>
+    <h4>Заявка № @Model.TourRequestId</h4>
+    <dl class="row">
+        <dt class="col-sm-2">Пользователь</dt>
+        <dd class="col-sm-10">@Model.User.FullName</dd>
+
+        <dt class="col-sm-2">Статус</dt>
+        <dd class="col-sm-10">@Model.Status</dd>
+
+        <dt class="col-sm-2">Предпочтения</dt>
+        <dd class="col-sm-10">@Model.Preferences</dd>
+
+        @if (Model.Status == "Одобрено" && Model.Tour != null)
+        {
+            <dt class="col-sm-2">Рекомендованный тур</dt>
+            <dd class="col-sm-10">@Model.Tour.Title</dd>
+        }
+    </dl>
+</div>
+
+@if (Model.Status == "На рассмотрении")
+{
+    <form method="post" asp-action="Approve" asp-route-id="@Model.TourRequestId">
+        <div class="form-group">
+            <label for="TourId">Выберите тур для рекомендации</label>
+            <select class="form-control" id="TourId" name="TourId">
+                @foreach (var tour in ViewBag.Tours)
+                {
+                    <option value="@tour.TourId">@tour.Title</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Подтвердить</button>
+    </form>
+
+    <form method="post" asp-action="Reject" asp-route-id="@Model.TourRequestId" style="margin-top: 10px;">
+        <button type="submit" class="btn btn-danger">Отклонить</button>
+    </form>
+}
+else if (Model.Status == "Отклонено")
+{
+    <div class="alert alert-danger" role="alert">
+        Заявка отклонена.
+    </div>
+}
+else if (Model.Status == "Одобрено")
+{
+    <div class="alert alert-success" role="alert">
+        Заявка одобрена и тур рекомендован: @Model.Tour?.Title
+    </div>
+}

@@ -31,19 +31,34 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <div class="row">
+                            <!-- Кнопка Турплан -->
                             <div class="col-sm">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">Турплан</a>
                             </div>
-                            <div class="col-sm">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Выйти</a>
+
+                            <!-- Всплывающее меню Мой профиль -->
+                            <div class="col-sm dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Мой профиль
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="PersonalAccount" asp-action="Index">Личный кабинет</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Выйти</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     }
                     else
                     {
+                        <!-- Кнопка Войти -->
                         <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
                     }
                 </div>
+
             </div>
         </nav>
     </header>

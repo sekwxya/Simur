@@ -2,10 +2,20 @@
 
 @{
     ViewData["Title"] = "Турплан";
+    var user = ViewData["User"] as TourAgency.Models.User;
 }
 
 <div class="container mt-4">
     <h1>Турплан</h1>
+
+    @if (user != null)
+    {
+        <div class="mb-4">
+            <h5>Баланс: @user.Balance.ToString("C")</h5>
+            <h5>Бонусные баллы: @user.LoyaltyPoints</h5>
+        </div>
+    }
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -20,24 +30,28 @@
         <tbody>
             @foreach (var item in Model)
             {
+                var discountedPrice = item.Tour.DiscountedPrice;
+                var priceWithLoyalty = Math.Max(1, discountedPrice - user.LoyaltyPoints);
+
                 <tr>
                     <td>@item.Tour.Title</td>
                     <td>@item.Tour.Description</td>
                     <td>@item.Tour.Country</td>
-                    <td>@item.Tour.DiscountedPrice.ToString("C")</td>
+                    <td>@discountedPrice.ToString("C")</td>
                     <td>@item.Tour.StartDate.ToShortDateString() - @item.Tour.EndDate.ToShortDateString()</td>
                     <td>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmPurchaseModal"
+                                data-tour-plan-id="@item.TourPlanId"
+                                data-tour-title="@item.Tour.Title"
+                                data-discounted-price="@discountedPrice"
+                                data-price-with-loyalty="@priceWithLoyalty"
+                                data-user-balance="@user.Balance"
+                                data-user-loyalty="@user.LoyaltyPoints">
+                            Купить
+                        </button>
                         <form asp-action="RemoveFromCart" method="post" class="d-inline">
                             <input type="hidden" name="tourPlanId" value="@item.TourPlanId" />
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                Удалить
-                            </button>
-                        </form>
-                        <form asp-action="MoveToTourHistory" method="post" class="d-inline ms-2">
-                            <input type="hidden" name="tourPlanId" value="@item.TourPlanId" />
-                            <button type="submit" class="btn btn-success btn-sm">
-                                Добавить в Историю
-                            </button>
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                         </form>
                     </td>
                 </tr>
@@ -45,17 +59,66 @@
         </tbody>
     </table>
 </div>
-<div class="modal fade" id="tourDetailsModal" tabindex="-1" aria-labelledby="tourDetailsModalLabel" aria-hidden="true">
+
+<!-- Модальное окно для подтверждения покупки -->
+<div class="modal fade" id="confirmPurchaseModal" tabindex="-1" aria-labelledby="confirmPurchaseModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="tourDetailsModalLabel">Подтверждение покупки</h5>
+                <h5 class="modal-title" id="confirmPurchaseModalLabel">Подтверждение покупки</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="tourDetailsContent">
-                <!-- Заглушка -->
-                <p>Загрузка информации...</p>
+            <div class="modal-body">
+                <p>Вы собираетесь приобрести тур <strong id="modalTourTitle"></strong>.</p>
+                <p>Цена: <span id="modalDiscountedPrice"></span></p>
+                <p>Цена с бонусами: <span id="modalPriceWithLoyalty"></span></p>
+                <p>Ваш баланс: <strong id="modalUserBalance"></strong></p>
+                <p>Ваши бонусы: <strong id="modalUserLoyalty"></strong></p>
+            </div>
+            <div class="modal-footer">
+                <form id="purchaseWithoutBonusesForm" asp-action="ConfirmPurchase" method="post" class="d-inline">
+                    <input type="hidden" name="tourPlanId" id="tourPlanIdWithoutBonuses" />
+                    <input type="hidden" name="useLoyaltyPoints" value="false" />
+                    <button type="submit" class="btn btn-primary">Купить без бонусов</button>
+                </form>
+                <form id="purchaseWithBonusesForm" asp-action="ConfirmPurchase" method="post" class="d-inline">
+                    <input type="hidden" name="tourPlanId" id="tourPlanIdWithBonuses" />
+                    <input type="hidden" name="useLoyaltyPoints" value="true" />
+                    <button type="submit" id="btnPurchaseWithBonuses" class="btn btn-success">Купить с бонусами</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    const confirmPurchaseModal = document.getElementById('confirmPurchaseModal');
+    confirmPurchaseModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        const tourPlanId = button.getAttribute('data-tour-plan-id');
+        const tourTitle = button.getAttribute('data-tour-title');
+        const discountedPrice = button.getAttribute('data-discounted-price');
+        const priceWithLoyalty = button.getAttribute('data-price-with-loyalty');
+        const userBalance = button.getAttribute('data-user-balance');
+        const userLoyalty = button.getAttribute('data-user-loyalty');
+
+        document.getElementById('modalTourTitle').textContent = tourTitle;
+        document.getElementById('modalDiscountedPrice').textContent = `${discountedPrice} ₽`;
+        document.getElementById('modalPriceWithLoyalty').textContent = `${priceWithLoyalty} ₽`;
+        document.getElementById('modalUserBalance').textContent = `${userBalance} ₽`;
+        document.getElementById('modalUserLoyalty').textContent = userLoyalty;
+
+        document.getElementById('tourPlanIdWithoutBonuses').value = tourPlanId;
+        document.getElementById('tourPlanIdWithBonuses').value = tourPlanId;
+
+        const btnPurchaseWithBonuses = document.getElementById('btnPurchaseWithBonuses');
+        if (parseFloat(priceWithLoyalty) > parseFloat(userBalance)) {
+            btnPurchaseWithBonuses.disabled = true;
+            btnPurchaseWithBonuses.textContent = 'Недостаточно средств';
+        } else {
+            btnPurchaseWithBonuses.disabled = false;
+            btnPurchaseWithBonuses.textContent = `Купить за ${priceWithLoyalty} ₽`;
+        }
+    });
+</script>

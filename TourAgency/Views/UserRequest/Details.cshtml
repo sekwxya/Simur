@@ -1,0 +1,92 @@
+﻿@model TourAgency.Models.TourRequest
+
+@{
+    ViewData["Title"] = "Детали заявки";
+}
+
+<h1>Детали заявки</h1>
+
+<div>
+    <h4>Id заявки: @Model.TourRequestId</h4>
+    <p><strong>Статус:</strong> @Model.Status</p>
+    <p><strong>Предпочтения:</strong> @Model.Preferences</p>
+</div>
+
+<div>
+    <h3>Информация о туре</h3>
+    @if (Model.Tour != null)
+    {
+        <div>
+            <p><strong>Название:</strong> @Model.Tour.Title</p>
+            <p><strong>Описание:</strong> @Model.Tour.Description</p>
+            <p><strong>Цена:</strong> @Model.Tour.DiscountedPrice.ToString("C")</p>
+            <p><strong>Средний рейтинг:</strong> @Model.Tour.AverageRating.ToString("F1")</p>
+            <p><strong>Страна:</strong> @Model.Tour.Country</p>
+
+            <button id="addToPlanBtn-@Model.Tour.TourId"
+                    class="btn btn-success"
+                    onclick="addToTourPlan(@Model.Tour.TourId)">
+                Добавить в Турплан
+            </button>
+
+        </div>
+
+        <h4>Отзывы о туре</h4>
+        @if (Model.Tour.reviews != null && Model.Tour.reviews.Any())
+        {
+            <ul class="list-group">
+                @foreach (var review in Model.Tour.reviews)
+                {
+                    <li class="list-group-item">
+                        <p><strong>Пользователь:</strong> @review.User.FullName</p>
+                        <p><strong>Рейтинг:</strong> @review.Rating</p>
+                        <p><strong>Комментарий:</strong> @review.Comment</p>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Отзывов пока нет.</p>
+        }
+    }
+    else
+    {
+        <p>Тур не назначен.</p>
+    }
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+</div>
+<script>
+        function addToTourPlan(tourId, event) {
+        if (event) event.preventDefault(); // Остановка стандартного поведения
+
+        fetch('/Home/AddToTourPlan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ tourId: tourId })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Данный тур уже добавлен в турплан.");
+            }
+        })
+        .then(data => {
+            alert(data.message);
+            // Изменяем кнопку
+            const button = document.getElementById(`addToPlanBtn-${tourId}`);
+            button.classList.remove('btn-success');
+            button.classList.add('btn-secondary');
+            button.textContent = 'Добавлено в Турплан';
+            button.disabled = true;
+        })
+        .catch(error => {
+            alert(error.message);
+        });
+    }
+
+</script>

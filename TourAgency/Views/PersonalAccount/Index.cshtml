@@ -1,0 +1,41 @@
+﻿@model TourAgency.Models.User
+
+<div class="container mt-5">
+    <h2>Добро пожаловать, @Model.FullName!</h2>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Баланс
+                </div>
+                <div class="card-body">
+                    <h4>@Model.Balance.ToString("C")</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    Бонусные баллы
+                </div>
+                <div class="card-body">
+                    <h4>@Model.LoyaltyPoints</h4>
+                </div>
+            </div>
+        </div>
+        <p>
+
+        </p>
+        <p>
+            <a asp-controller="UserRequest" asp-action="Index" class="btn btn-info">
+                Мои заявки на подбор тура
+            </a>
+            <a asp-controller="Review" asp-action="Index" class="btn btn-info">
+                Мои отзывы
+            </a>
+            <a asp-controller="TourHistory" asp-action="Index" class="btn btn-info">
+                История покупок
+            </a>
+        </p>
+    </div>
+</div>
