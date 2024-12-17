@@ -1,0 +1,31 @@
+﻿@model IEnumerable<TourAgency.Models.Review>
+
+<h2>Мои отзывы</h2>
+
+<div class="mb-3">
+    <a asp-action="SelectTourForReview" class="btn btn-success">Добавить отзыв</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Тур</th>
+            <th>Комментарий</th>
+            <th>Рейтинг</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var review in Model)
+        {
+            <tr>
+                <td>@review.Tour.Title</td>
+                <td>@review.Comment</td>
+                <td>@review.Rating</td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@review.ReviewId" class="btn btn-danger">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

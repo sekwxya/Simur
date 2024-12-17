@@ -71,7 +71,9 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.TourId">Редактировать</a> |
                 <a asp-action="Details" asp-route-id="@item.TourId">Подробнее</a> |
-                <a asp-action="Delete" asp-route-id="@item.TourId">Удалить</a>
+                    <a asp-action="Delete" asp-route-id="@item.TourId">Удалить</a>|
+                    <a asp-controller="TourReviews" asp-action="Index" asp-route-tourId="@item.TourId">Отзывы</a>
+
             </td>
         </tr>
 }

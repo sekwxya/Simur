@@ -48,7 +48,9 @@ namespace TourAgency.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var tourRequest = await _context.TourRequest
-                .Include(tr => tr.Tour)
+                .Include(tr => tr.Tour) // Включаем информацию о туре
+                .ThenInclude(t => t.reviews) // Включаем отзывы о туре
+                .ThenInclude(r => r.User) // Включаем информацию о пользователях, оставивших отзывы
                 .FirstOrDefaultAsync(tr => tr.TourRequestId == id);
 
             if (tourRequest == null)
@@ -58,5 +60,6 @@ namespace TourAgency.Controllers
 
             return View(tourRequest);
         }
+
     }
 }

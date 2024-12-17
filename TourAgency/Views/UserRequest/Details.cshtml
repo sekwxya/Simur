@@ -10,17 +10,48 @@
     <h4>Id заявки: @Model.TourRequestId</h4>
     <p><strong>Статус:</strong> @Model.Status</p>
     <p><strong>Предпочтения:</strong> @Model.Preferences</p>
-    <p>
-        <strong>Рекомендованный тур:</strong>
-        @if (Model.Tour != null)
+</div>
+
+<div>
+    <h3>Информация о туре</h3>
+    @if (Model.Tour != null)
+    {
+        <div>
+            <p><strong>Название:</strong> @Model.Tour.Title</p>
+            <p><strong>Описание:</strong> @Model.Tour.Description</p>
+            <p><strong>Цена:</strong> @Model.Tour.DiscountedPrice.ToString("C")</p>
+            <p><strong>Средний рейтинг:</strong> @Model.Tour.AverageRating.ToString("F1")</p>
+            <p><strong>Страна:</strong> @Model.Tour.Country</p>
+
+            <form asp-controller="Home" asp-action="AddToTourPlan" method="post">
+                <input type="hidden" name="tourId" value="@Model.Tour.TourId" />
+                <button type="submit" class="btn btn-success">Добавить в Турплан</button>
+            </form>
+        </div>
+
+        <h4>Отзывы о туре</h4>
+        @if (Model.Tour.reviews != null && Model.Tour.reviews.Any())
         {
-            @Model.Tour.Title
+            <ul class="list-group">
+                @foreach (var review in Model.Tour.reviews)
+                {
+                    <li class="list-group-item">
+                        <p><strong>Пользователь:</strong> @review.User.FullName</p>
+                        <p><strong>Рейтинг:</strong> @review.Rating</p>
+                        <p><strong>Комментарий:</strong> @review.Comment</p>
+                    </li>
+                }
+            </ul>
         }
         else
         {
-            <span>Не назначен</span>
+            <p>Отзывов пока нет.</p>
         }
-    </p>
+    }
+    else
+    {
+        <p>Тур не назначен.</p>
+    }
 </div>
 
 <div>
