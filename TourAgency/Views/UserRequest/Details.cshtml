@@ -1,0 +1,28 @@
+﻿@model TourAgency.Models.TourRequest
+
+@{
+    ViewData["Title"] = "Детали заявки";
+}
+
+<h1>Детали заявки</h1>
+
+<div>
+    <h4>Id заявки: @Model.TourRequestId</h4>
+    <p><strong>Статус:</strong> @Model.Status</p>
+    <p><strong>Предпочтения:</strong> @Model.Preferences</p>
+    <p>
+        <strong>Рекомендованный тур:</strong>
+        @if (Model.Tour != null)
+        {
+            @Model.Tour.Title
+        }
+        else
+        {
+            <span>Не назначен</span>
+        }
+    </p>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+</div>
