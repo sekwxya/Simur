@@ -14,18 +14,18 @@ namespace TourAgency.Controllers
             _context = context;
         }
 
-        // Список всех заявок
+        // Список заявок со статусом "На рассмотрении"
         public async Task<IActionResult> Index()
         {
             var tourRequests = await _context.TourRequest
                 .Include(tr => tr.User)
-                .Where(tr => tr.Status == "На рассмотрении") // Фильтруем только заявки "На рассмотрении"
+                .Where(tr => tr.Status == "На рассмотрении")
                 .ToListAsync();
 
             return View(tourRequests);
         }
 
-        // Отображение деталей заявки
+        // Детальный просмотр заявки
         public async Task<IActionResult> Details(int id)
         {
             var tourRequest = await _context.TourRequest
@@ -37,13 +37,14 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
+            // Передаем список туров в ViewBag для выбора
             var tours = await _context.Tour.ToListAsync();
             ViewBag.Tours = tours;
 
             return View(tourRequest);
         }
 
-        // Подтверждение заявки
+        // Подтверждение заявки с сохранением выбранного тура
         [HttpPost]
         public async Task<IActionResult> Approve(int id, int TourId)
         {
@@ -60,10 +61,11 @@ namespace TourAgency.Controllers
                 return BadRequest("Выбранный тур не найден.");
             }
 
-            // Обновление статуса заявки
+            // Обновляем заявку: присваиваем TourId и статус "Одобрено"
+            tourRequest.TourId = TourId;
             tourRequest.Status = "Одобрено";
 
-            // Сохранение изменений
+            _context.Update(tourRequest);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
@@ -80,10 +82,10 @@ namespace TourAgency.Controllers
                 return NotFound();
             }
 
-            // Обновление статуса заявки
+            // Обновляем статус заявки на "Отклонено"
             tourRequest.Status = "Отклонено";
 
-            // Сохранение изменений
+            _context.Update(tourRequest);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));

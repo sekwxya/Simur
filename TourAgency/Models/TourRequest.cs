@@ -6,6 +6,8 @@
         public int UserId { get; set; }
         public string Preferences { get; set; }
         public string? Status { get; set; }
+        public int? TourId { get; set; }
+        public Tour? Tour { get; set; }
         public User User { get; set; }
     }
 }

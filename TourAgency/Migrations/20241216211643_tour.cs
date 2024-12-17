@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TourAgency.Migrations
 {
     /// <inheritdoc />
-    public partial class tour3 : Migration
+    public partial class tour : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -81,27 +81,6 @@ namespace TourAgency.Migrations
                         column: x => x.DiscountId,
                         principalTable: "Discount",
                         principalColumn: "DiscountId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TourRequest",
-                columns: table => new
-                {
-                    TourRequestId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    Preferences = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TourRequest", x => x.TourRequestId);
-                    table.ForeignKey(
-                        name: "FK_TourRequest_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -186,6 +165,33 @@ namespace TourAgency.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TourRequest",
+                columns: table => new
+                {
+                    TourRequestId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Preferences = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: true),
+                    TourId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TourRequest", x => x.TourRequestId);
+                    table.ForeignKey(
+                        name: "FK_TourRequest_Tour_TourId",
+                        column: x => x.TourId,
+                        principalTable: "Tour",
+                        principalColumn: "TourId");
+                    table.ForeignKey(
+                        name: "FK_TourRequest_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Rewiew_TourId",
                 table: "Rewiew",
@@ -220,6 +226,11 @@ namespace TourAgency.Migrations
                 name: "IX_TourPlan_UserId",
                 table: "TourPlan",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TourRequest_TourId",
+                table: "TourRequest",
+                column: "TourId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TourRequest_UserId",

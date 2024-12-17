@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<TourAgency.Models.TourRequest>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Заявки на подбор тура";
 }
 
 <h1>Заявки на подбор тура</h1>
@@ -28,6 +28,7 @@
     <thead>
         <tr>
             <th>Id</th>
+            <th>Пользователь</th>
             <th>Статус</th>
             <th>Предпочтения</th>
             <th>Действия</th>
@@ -35,20 +36,14 @@
     </thead>
     <tbody>
         @foreach (var item in Model)
-
         {
             <tr>
+                <td>@item.TourRequestId</td>
+                <td>@item.User.FullName</td>
+                <td>@item.Status</td>
+                <td>@item.Preferences</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TourRequestId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Preferences)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.TourRequestId">Details</a> |
+                    <a asp-action="Details" asp-route-id="@item.TourRequestId" class="btn btn-primary btn-sm">Details</a>
                 </td>
             </tr>
         }
