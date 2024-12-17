@@ -108,9 +108,25 @@ namespace TourAgency.Controllers
             return Ok(new { message = "Тур успешно добавлен в Турплан!" });
         }
 
+        public async Task<IActionResult> TourDetails(int id)
+        {
+            var tour = await _context.Tour
+                .Include(t => t.reviews)
+                 .ThenInclude(r => r.User) // Включаем пользователей, оставивших отзывы
+                .FirstOrDefaultAsync(t => t.TourId == id);
+
+            if (tour == null)
+            {
+                return NotFound("Тур не найден.");
+            }
+
+            return View(tour); // Передаем тур и отзывы в представление
+        }
+
+
         public IActionResult Urna()
         {
-            return Redirect("https://ru.wikipedia.org/wiki/%D0%9F%D0%BE%D0%B3%D1%80%D0%B5%D0%B1%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F_%D1%83%D1%80%D0%BD%D0%B0");
+            return RedirectToAction("AccessDenied", "Account");
         }
     }
 }

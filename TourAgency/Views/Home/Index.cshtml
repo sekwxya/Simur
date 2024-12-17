@@ -27,12 +27,9 @@
                             <p><strong>Цена со скидкой:</strong> @tour.DiscountedPrice.ToString("C")</p>
                             <p><strong>Рейтинг:</strong> @tour.AverageRating.ToString("F1")</p>
                             <p><strong>Страна:</strong> @tour.Country</p>
-                            <button class="btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#tourDetailsModal"
-                                    onclick="loadTourDetails(@tour.TourId)">
+                            <a asp-action="TourDetails" asp-controller="Home" asp-route-id="@tour.TourId" class="btn btn-info">
                                 Подробнее
-                            </button>
+                            </a>
                             <button id="addToPlanBtn-@tour.TourId"
                                     class="btn btn-success"
                                     onclick="addToTourPlan(@tour.TourId)">
@@ -63,12 +60,9 @@
                             <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
                             <p><strong>Рейтинг:</strong> @tour.AverageRating.ToString("F1")</p>
                             <p><strong>Страна:</strong> @tour.Country</p>
-                            <button class="btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#tourDetailsModal"
-                                    onclick="loadTourDetails(@tour.TourId)">
+                            <a asp-action="TourDetails" asp-controller="Home" asp-route-id="@tour.TourId" class="btn btn-info">
                                 Подробнее
-                            </button>
+                            </a>
                             <button id="addToPlanBtn-@tour.TourId"
                                     class="btn btn-success"
                                     onclick="addToTourPlan(@tour.TourId)">
@@ -99,12 +93,9 @@
                             <p><strong>Цена:</strong> @tour.Price.ToString("C")</p>
                             <p><strong>Рейтинг:</strong> @tour.AverageRating.ToString("F1")</p>
                             <p><strong>Страна:</strong> @tour.Country</p>
-                            <button class="btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#tourDetailsModal"
-                                    onclick="loadTourDetails(@tour.TourId)">
+                            <a asp-action="TourDetails" asp-controller="Home" asp-route-id="@tour.TourId" class="btn btn-info">
                                 Подробнее
-                            </button>
+                            </a>
                             <button id="addToPlanBtn-@tour.TourId"
                                     class="btn btn-success"
                                     onclick="addToTourPlan(@tour.TourId)">
@@ -131,7 +122,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="tourDetailsContent">
-                <!-- Заглушка -->
                 <p>Загрузка информации...</p>
             </div>
         </div>

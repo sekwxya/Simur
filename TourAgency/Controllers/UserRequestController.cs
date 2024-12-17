@@ -61,5 +61,34 @@ namespace TourAgency.Controllers
             return View(tourRequest);
         }
 
+        [Authorize]
+        [HttpPost]
+        public IActionResult AddToTourPlan(int tourId)
+        {
+            var email = User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = _context.User.FirstOrDefault(x => x.Email == email);
+
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Пользователь не найден." });
+            }
+
+            var existingPlan = _context.TourPlan.FirstOrDefault(tp => tp.UserId == user.UserId && tp.TourId == tourId);
+            if (existingPlan != null)
+            {
+                return BadRequest(new { message = "Тур уже добавлен в ваш Турплан." });
+            }
+
+            var tourPlan = new TourPlan
+            {
+                UserId = user.UserId,
+                TourId = tourId
+            };
+
+            _context.TourPlan.Add(tourPlan);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Тур успешно добавлен в Турплан!" });
+        }
     }
 }

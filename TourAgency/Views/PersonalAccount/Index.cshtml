@@ -2,18 +2,6 @@
 
 <div class="container mt-5">
     <h2>Добро пожаловать, @Model.FullName!</h2>
-    <div class="mt-4">
-        <a asp-controller="UserRequest" asp-action="Index" class="btn btn-info">
-            Мои заявки на подбор тура
-        </a>
-        <div class="mt-4">
-            <a asp-controller="Review" asp-action="Index" class="btn btn-info">
-                Мои отзывы
-            </a>
-        </div>
-
-    </div>
-
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card">
@@ -35,5 +23,19 @@
                 </div>
             </div>
         </div>
+        <p>
+
+        </p>
+        <p>
+            <a asp-controller="UserRequest" asp-action="Index" class="btn btn-info">
+                Мои заявки на подбор тура
+            </a>
+            <a asp-controller="Review" asp-action="Index" class="btn btn-info">
+                Мои отзывы
+            </a>
+            <a asp-controller="TourHistory" asp-action="Index" class="btn btn-info">
+                История покупок
+            </a>
+        </p>
     </div>
 </div>

@@ -154,6 +154,21 @@ namespace TourAgency.Controllers
 
             return View(toursForReview);
         }
+        //public async Task<IActionResult> GetReviewsByTour(int tourId)
+        //{
+        //    var reviews = await _context.Rewiew
+        //        .Include(r => r.User)
+        //        .Where(r => r.TourId == tourId)
+        //        .Select(r => new
+        //        {
+        //            r.Comment,
+        //            r.Rating,
+        //            UserName = r.User.FullName
+        //        })
+        //        .ToListAsync();
+
+        //    return PartialView("_TourReviewsPartial", reviews);
+        //}
 
     }
 }

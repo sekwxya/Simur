@@ -23,10 +23,12 @@
             <p><strong>Средний рейтинг:</strong> @Model.Tour.AverageRating.ToString("F1")</p>
             <p><strong>Страна:</strong> @Model.Tour.Country</p>
 
-            <form asp-controller="Home" asp-action="AddToTourPlan" method="post">
-                <input type="hidden" name="tourId" value="@Model.Tour.TourId" />
-                <button type="submit" class="btn btn-success">Добавить в Турплан</button>
-            </form>
+            <button id="addToPlanBtn-@Model.Tour.TourId"
+                    class="btn btn-success"
+                    onclick="addToTourPlan(@Model.Tour.TourId)">
+                Добавить в Турплан
+            </button>
+
         </div>
 
         <h4>Отзывы о туре</h4>
@@ -57,3 +59,34 @@
 <div>
     <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
 </div>
+<script>
+        function addToTourPlan(tourId, event) {
+        if (event) event.preventDefault(); // Остановка стандартного поведения
+
+        fetch('/Home/AddToTourPlan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ tourId: tourId })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Данный тур уже добавлен в турплан.");
+            }
+        })
+        .then(data => {
+            alert(data.message);
+            // Изменяем кнопку
+            const button = document.getElementById(`addToPlanBtn-${tourId}`);
+            button.classList.remove('btn-success');
+            button.classList.add('btn-secondary');
+            button.textContent = 'Добавлено в Турплан';
+            button.disabled = true;
+        })
+        .catch(error => {
+            alert(error.message);
+        });
+    }
+
+</script>
