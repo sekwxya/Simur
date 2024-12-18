@@ -16,32 +16,33 @@ namespace TourAgency.Controllers
             _context = context;
         }
 
-        [Authorize]
         public async Task<IActionResult> Index()
         {
-            var email = User.FindFirst(ClaimTypes.Name)?.Value;
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
             var tours = await _context.Tour
                 .Include(t => t.Discount)
                 .Include(t => t.reviews)
                 .ToListAsync();
 
             // Горячие туры (по конкретной скидке)
-            var hotTours = tours.Where(t => t.Discount != null && t.Discount.DiscountId == 2).ToList();
+            var hotTours = tours.Where(t => t.Discount != null && t.Discount.Name == "Hot").ToList();
 
             // Рекомендации (только с высоким средним рейтингом и ограничение на 5)
-            var recommendedTours = tours
-                .Where(t => t.AverageRating >= 4 &&
-                            !_context.TourHistory.Any(th => th.UserId == user.UserId && th.TourId == t.TourId))
-                .OrderByDescending(t => t.AverageRating)
-                .Take(5)
-                .ToList();
+            List<Tour> recommendedTours = new List<Tour>();
+            if (User.Identity.IsAuthenticated)
+            {
+                var email = User.FindFirst(ClaimTypes.Name)?.Value;
+                var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+
+                if (user != null)
+                {
+                    recommendedTours = tours
+                        .Where(t => t.AverageRating >= 4 &&
+                                    !_context.TourHistory.Any(th => th.UserId == user.UserId && th.TourId == t.TourId))
+                        .OrderByDescending(t => t.AverageRating)
+                        .Take(5)
+                        .ToList();
+                }
+            }
 
             // Обычные туры (оставшиеся, без учета фильтров для рекомендаций)
             var regularTours = tours.Where(t => t.Discount == null || t.Discount.DiscountId != 2).ToList();

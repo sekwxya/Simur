@@ -56,7 +56,7 @@ namespace TourAgency.Controllers
                 TempData["error"] = "User with this email already exists";
                 return View("Register");
             }
-            userDto.Role = "Adun";
+            userDto.Role = "Default";
             await _context.AddAsync(userDto);
             var result = _context.SaveChanges();
             if (result < 0)

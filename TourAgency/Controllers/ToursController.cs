@@ -11,6 +11,7 @@ using TourAgency.Models;
 
 namespace TourAgency.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ToursController : Controller
     {
         private readonly AppDbContext _context;
@@ -20,7 +21,6 @@ namespace TourAgency.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Tour.Include(t => t.Discount);

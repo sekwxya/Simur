@@ -18,6 +18,7 @@ namespace TourAgency.Controllers
         }
 
         // Список заявок со статусом "На рассмотрении"
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var tourRequests = await _context.TourRequest
@@ -29,6 +30,7 @@ namespace TourAgency.Controllers
         }
 
         // Детальный просмотр заявки
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int id)
         {
             var tourRequest = await _context.TourRequest
@@ -49,6 +51,7 @@ namespace TourAgency.Controllers
 
         // Подтверждение заявки с сохранением выбранного тура
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Approve(int id, int TourId)
         {
             var tourRequest = await _context.TourRequest.FindAsync(id);
@@ -76,6 +79,7 @@ namespace TourAgency.Controllers
 
         // Отклонение заявки
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Reject(int id)
         {
             var tourRequest = await _context.TourRequest.FindAsync(id);

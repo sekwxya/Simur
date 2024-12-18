@@ -2,9 +2,11 @@
 using TourAgency.Data;
 using TourAgency.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TourAgency.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BalancesController : Controller
     {
         private readonly AppDbContext _context;
